@@ -2,7 +2,7 @@ package com.company;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
         int[] array = new int[]{4, 5, 7, 11, 12, 15, 15, 21, 40, 45};
         int index = searchIndex(array, 11);
         System.out.println("Szukany index: " + index);
