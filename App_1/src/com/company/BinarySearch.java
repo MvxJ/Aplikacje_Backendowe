@@ -1,6 +1,6 @@
 package com.company;
 
-public class Main {
+public class BinarySearch {
 
     public static void main(String[] args)  {
         int[] array = new int[]{4, 5, 7, 11, 12, 15, 15, 21, 40, 45};
