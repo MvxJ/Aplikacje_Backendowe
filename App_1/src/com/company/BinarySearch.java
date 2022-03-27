@@ -13,7 +13,7 @@ public class BinarySearch {
         int index = 0;
         int limit = array.length - 1;
         while (index <= limit) {
-            int point = (int)Math.ceil((index + limit) / 2);
+            int point = (int)Math.ceil((index + limit) / 2.0);
             int entry = array[point];
             if (value > entry) {
                 index = point + 1;
