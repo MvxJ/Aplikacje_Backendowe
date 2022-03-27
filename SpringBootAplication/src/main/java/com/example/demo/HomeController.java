@@ -16,24 +16,16 @@ public class HomeController {
     }
 
     @RequestMapping("/example")
-    public String test(
-            @RequestParam Integer variant
-    ) {
+    public String example() {
+        return "example";
+    }
+
+    @RequestMapping("/exampleTest")
+    public String exampleTest(@RequestParam(defaultValue = "1") Integer variant) {
         if (variant == 2 ) {
             return "example2";
         }
 
         return "example";
-    }
-
-    @RequestMapping("/user/{id}")
-    @ResponseBody
-    public UserEntity user(
-        @PathVariable Long id,
-        @RequestParam(required = false) String name,
-        @RequestParam(required = false) Integer age
-    ) {
-        UserEntity user = new UserEntity(id, name, age);
-        return user;
     }
 }
