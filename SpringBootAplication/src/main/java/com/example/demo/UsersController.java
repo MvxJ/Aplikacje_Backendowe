@@ -29,7 +29,7 @@ public class UsersController {
             @RequestParam String name,
             @RequestParam Integer age
     ) {
-        Long id = new Long(users.size() + 1);
+        Long id = (long)users.size() + 1L;
         UserEntity user = new UserEntity(id, name, age);
         users.put(id, user);
 
