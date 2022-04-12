@@ -1,15 +1,15 @@
 package lab3.application.Lab3;
 
 public class UserEntity {
-    private Long id;
+    private Integer id;
     private String name;
     private Integer age;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -29,7 +29,7 @@ public class UserEntity {
         this.age = age;
     }
 
-    public UserEntity(Long id, String name, Integer age) {
+    public UserEntity(Integer id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;
