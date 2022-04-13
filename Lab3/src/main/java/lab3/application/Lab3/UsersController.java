@@ -9,20 +9,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 
 @Controller
 public class UsersController {
 
     @PostConstruct
-    private void onCreate()
-    {
-
+    private void onCreate() throws IOException {
+        UsersService.readUsers();
     }
 
     @PreDestroy
-    private void onDestruct()
-    {
-
+    private void onDestruct() throws IOException {
+        UsersService.writeUsers();
     }
 
     @Autowired

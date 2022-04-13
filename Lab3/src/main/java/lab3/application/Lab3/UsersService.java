@@ -6,16 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 @Service
 public class UsersService {
-    private static HashMap<Integer, UserEntity> users = new HashMap<Integer, UserEntity>() {{
-        put(1, new UserEntity(1, "Max", 22));
-        put(2, new UserEntity(2, "Klaudia", 21));
-        put(3, new UserEntity(3, "Szymon", 18));
-        put(4, new UserEntity(4, "Szymon", 22));
-    }};
+    private static HashMap users = new HashMap<Integer, UserEntity>();
 
     public static UserEntity createUser(String userData) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -25,8 +23,6 @@ public class UsersService {
     }
 
     public static ResponseEntity getUser(Integer id) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         if (users.get(id) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else {
@@ -37,6 +33,7 @@ public class UsersService {
     }
 
     public static UserEntity createUser(UserEntity user) {
+        user.setId(users.size() + 1);
         users.put(user.getId(), user);
 
         return user;
@@ -76,5 +73,23 @@ public class UsersService {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    public static void writeUsers() throws IOException {
+        FileOutputStream file = new FileOutputStream("users.json");
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(file, StandardCharsets.UTF_8);
+        BufferedWriter writer = new BufferedWriter(outputStreamWriter);
+        ObjectMapper objectMapper = new ObjectMapper();
+        writer.write(objectMapper.writeValueAsString(users));
+        writer.flush();
+    }
+
+    public static void readUsers() throws IOException {
+        try (FileInputStream inputStream = new FileInputStream("users.json")) {
+            File file = new File("users.json");
+            InputStreamReader reader = new InputStreamReader(inputStream);
+            ObjectMapper objectMapper = new ObjectMapper();
+            users = objectMapper.readValue(reader, HashMap.class);
+        }
     }
 }
