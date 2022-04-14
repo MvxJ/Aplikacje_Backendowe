@@ -1,0 +1,26 @@
+Requests for insomnia
+
+Get users
+- http://localhost:8080/api/users
+
+Create user
+-http://localhost:8080/api/users/create
+
+{
+	"name": "Max",
+	"age": 18
+}
+
+Delete user
+- http://localhost:8080/api/users/1/remove
+
+Get single user
+- http://localhost:8080/api/users/1/
+
+Update user
+- http://localhost:8080/api/users/1/update
+
+{
+	"name": "Maks",
+	"age": 22
+}
