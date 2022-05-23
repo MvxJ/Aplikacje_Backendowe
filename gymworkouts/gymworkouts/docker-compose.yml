@@ -1,0 +1,10 @@
+version: "3.4"
+services:
+  database:
+    image: 'mysql:5.7'
+    environment:
+      MYSQL_ROOT_PASSWORD=root
+      MYSQL_PASSWORD=root
+      MYSQL_DATABASE=gymworokoutslibrary
+    ports:
+      - "3307:3306"
