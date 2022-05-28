@@ -7,22 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.IOException;
 
 @Controller
 public class UsersController {
-
-    @PostConstruct
-    private void onCreate() throws IOException {
-        UsersService.readUsers();
-    }
-
-    @PreDestroy
-    private void onDestruct() throws IOException {
-        UsersService.writeUsers();
-    }
 
     @Autowired
     private UsersService usersService;
@@ -33,7 +20,7 @@ public class UsersController {
             @RequestParam(defaultValue = "1", name="page-number") int pageNumber,
             @RequestParam(defaultValue = "20", name="page-size") int pageSize
     ) {
-        return UsersService.getUsers(pageNumber, pageSize);
+        return usersService.getUsers(pageNumber, pageSize);
     }
 
     @RequestMapping(
@@ -46,7 +33,7 @@ public class UsersController {
     public UserEntity createUser(
             @RequestBody UserEntity user
     ) {
-        return UsersService.createUser(user);
+        return usersService.createUser(user);
     }
 
     @RequestMapping(
@@ -55,7 +42,7 @@ public class UsersController {
     )
     @ResponseBody
     public ResponseEntity getUser(@PathVariable Integer id) throws JsonProcessingException {
-        return UsersService.getUser(id);
+        return usersService.getUser(id);
     }
 
     @RequestMapping(
@@ -66,7 +53,7 @@ public class UsersController {
     @ResponseBody
     public ResponseEntity updateUser(@PathVariable Integer id, @RequestBody UserEntity user) throws JsonProcessingException {
         try {
-            return UsersService.updateUser(id, user);
+            return usersService.updateUser(id, user);
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +69,7 @@ public class UsersController {
     public ResponseEntity deleteUser(@PathVariable Integer id)
     {
         try {
-            UsersService.deleteUsers(id);
+            usersService.deleteUsers(id);
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.APPLICATION_JSON)
