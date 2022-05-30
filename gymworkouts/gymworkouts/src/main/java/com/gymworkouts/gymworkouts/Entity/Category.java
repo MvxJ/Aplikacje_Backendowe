@@ -1,4 +1,4 @@
-package Entity;
+package com.gymworkouts.gymworkouts.Entity;
 
 import lombok.*;
 
@@ -6,8 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -27,5 +26,5 @@ public class Category {
     public String description;
 
     @Column(name = "workouts")
-    public Set<Workout> workouts = new HashSet<>();
+    public List<Workout> workouts;
 }

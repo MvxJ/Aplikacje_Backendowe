@@ -1,4 +1,4 @@
-package Entity;
+package com.gymworkouts.gymworkouts.Entity;
 
 import lombok.*;
 

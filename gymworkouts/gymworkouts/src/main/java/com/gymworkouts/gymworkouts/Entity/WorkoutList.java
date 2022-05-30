@@ -1,10 +1,9 @@
-package Entity;
+package com.gymworkouts.gymworkouts.Entity;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -13,10 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WorkoutList {
-    @ManyToMany(mappedBy = "workoutsLists")
-    private Set<Workout> workouts = new HashSet<>();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public UUID userId;
+
+    @ManyToMany(mappedBy = "workoutsLists")
+    public List<Workout> workoutsList;
 }

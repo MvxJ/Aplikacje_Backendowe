@@ -1,10 +1,9 @@
-package Entity;
+package com.gymworkouts.gymworkouts.Entity;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -19,7 +18,7 @@ public class Workout {
             joinColumns = @JoinColumn(name = "workout_id"),
             inverseJoinColumns = @JoinColumn(name = "list_id")
     )
-    private Set<WorkoutList> workoutsLists = new HashSet<>();
+    private List<WorkoutList> workoutsLists;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +31,7 @@ public class Workout {
     public String description;
 
     @Column(name = "images")
-    public Set<Image> images= new HashSet<>();
+    public List<Image> images;
 
     @Column(name = "sex")
     public String sex;
