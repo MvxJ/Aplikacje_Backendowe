@@ -2,23 +2,21 @@ package com.gymworkouts.gymworkouts.Entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
+@Entity
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@Table(name = "users")
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public UUID id;
+    public long id;
 
     @Column(name = "username", nullable = false, unique = true)
     public String username;
@@ -38,12 +36,12 @@ public class User {
     @Column(name = "age")
     public int age;
 
-    @Column(name = "username")
+    @Column(name = "weight")
     public double weight;
 
     @Column(name = "height")
     public double height;
 
-    @Column(name = "workouts_lists")
-    public Set<WorkoutList> workoutsLists = new HashSet<>();
+//    @Column(name = "workouts_lists")
+//    public List<WorkoutListEntity> workoutsLists;
 }

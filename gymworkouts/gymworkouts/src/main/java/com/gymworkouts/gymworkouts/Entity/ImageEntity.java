@@ -2,21 +2,20 @@ package com.gymworkouts.gymworkouts.Entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
+@Entity
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Image {
+@Table(name = "images")
+public class ImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public UUID id;
+    public long id;
 
     @Column(name = "url_small")
     public String urlSmall;

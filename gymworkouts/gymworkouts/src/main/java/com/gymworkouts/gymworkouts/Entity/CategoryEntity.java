@@ -2,22 +2,21 @@ package com.gymworkouts.gymworkouts.Entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+@Table(name = "categories")
+public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public UUID id;
+    public long id;
 
     @Column(name = "name", nullable = false, unique = true)
     public String name;
@@ -25,6 +24,6 @@ public class Category {
     @Column(name = "description")
     public String description;
 
-    @Column(name = "workouts")
-    public List<Workout> workouts;
+//    @Column(name = "workouts")
+//    public List<WorkoutEntity> workouts;
 }

@@ -6,16 +6,18 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkoutList {
+@Table(name = "workouts_lists")
+public class WorkoutListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public UUID userId;
+    public long id;
 
-    @ManyToMany(mappedBy = "workoutsLists")
-    public List<Workout> workoutsList;
+//    @ManyToMany(mappedBy = "workoutsLists")
+//    public List<WorkoutEntity> workoutsList;
 }
