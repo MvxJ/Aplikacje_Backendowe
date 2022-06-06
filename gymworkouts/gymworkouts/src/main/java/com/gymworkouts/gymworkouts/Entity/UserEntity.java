@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -42,6 +41,6 @@ public class UserEntity {
     @Column(name = "height")
     public double height;
 
-//    @Column(name = "workouts_lists")
-//    public List<WorkoutListEntity> workoutsLists;
+    @OneToMany(cascade = CascadeType.ALL)
+    public List<WorkoutListEntity> workoutsLists;
 }

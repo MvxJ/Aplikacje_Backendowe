@@ -1,14 +1,8 @@
 package com.gymworkouts.gymworkouts.Entity;
 
-import com.gymworkouts.gymworkouts.Repository.WorkoutsRepository;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -28,8 +22,13 @@ public class WorkoutEntity {
     @Column(name = "description")
     public String description;
 
-//    @Column(name = "images")
-//    public List<ImageEntity> images;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "workouts_images",
+            joinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "workout_id", referencedColumnName = "id")
+    )
+    public List<ImageEntity> images;
 
     @Column(name = "sex")
     public String sex;
@@ -40,13 +39,17 @@ public class WorkoutEntity {
     @Column(name = "recommended_repetitions")
     public int recommendedRepetitions;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name="workouts_list",
-//            joinColumns = @JoinColumn(name = "workout_id"),
-//            inverseJoinColumns = @JoinColumn(name = "list_id")
-//    )
-//    public List<WorkoutListEntity> workoutsLists;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    public CategoryEntity category;
+
+    @ManyToMany
+    @JoinTable(
+            name="workouts_list_in_lists",
+            joinColumns = @JoinColumn(name = "list_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "workout_id", referencedColumnName = "id")
+    )
+    public List<WorkoutListEntity> workoutsLists;
 
     public long getId() {
         return id;

@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -18,6 +17,16 @@ public class WorkoutListEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
-//    @ManyToMany(mappedBy = "workoutsLists")
-//    public List<WorkoutEntity> workoutsList;
+    @Column(name = "name")
+    public String name;
+
+    @Column(name = "description")
+    public String description;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    public UserEntity user;
+
+    @ManyToMany(mappedBy = "workoutsLists")
+    public List<WorkoutEntity> workouts;
 }

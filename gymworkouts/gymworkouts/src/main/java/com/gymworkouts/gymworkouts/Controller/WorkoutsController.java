@@ -100,4 +100,8 @@ public class WorkoutsController {
 
         return ResponseEntity.of(foundWorkoutOptional);
     }
+
+    public ResponseEntity searchWokout() {
+
+    }
 }

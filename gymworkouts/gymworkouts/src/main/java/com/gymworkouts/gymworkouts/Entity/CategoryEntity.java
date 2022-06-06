@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -24,6 +23,6 @@ public class CategoryEntity {
     @Column(name = "description")
     public String description;
 
-//    @Column(name = "workouts")
-//    public List<WorkoutEntity> workouts;
+    @OneToMany(mappedBy = "category")
+    public List<WorkoutEntity> workouts;
 }
