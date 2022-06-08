@@ -101,7 +101,25 @@ public class WorkoutsController {
         return ResponseEntity.of(foundWorkoutOptional);
     }
 
-    public ResponseEntity searchWokout() {
+    @RequestMapping(
+            value = "/workout/search",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<WorkoutEntity>> searchWokout(
+            @RequestBody String searchText
+    ) {
+        return ResponseEntity.ok(this.workoutsRepository.searchByTerm(searchText));
+    }
 
+    @RequestMapping(
+            value = "/workout/category/{categoryId}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<WorkoutEntity>> getWorkoutsByCategory(
+            @RequestParam long categoryId
+    ) {
+        return ResponseEntity.ok(this.workoutsRepository.findByCategoryId(categoryId));
     }
 }

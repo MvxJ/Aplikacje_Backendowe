@@ -9,5 +9,7 @@ import java.util.UUID;
 
 public interface WorkoutsRepository extends JpaRepository<WorkoutEntity, Long> {
     Optional<WorkoutEntity> findById(long workoutId);
+    List<WorkoutEntity> findByCategoryId(long categoryId);
     List<WorkoutEntity> findAll();
+    List<WorkoutEntity> searchByTerm(String terms);
 }
