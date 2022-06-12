@@ -109,7 +109,7 @@ public class WorkoutsController {
     public ResponseEntity<List<WorkoutEntity>> searchWokout(
             @RequestBody String searchText
     ) {
-        return ResponseEntity.ok(this.workoutsRepository.searchByTerm(searchText));
+        return ResponseEntity.ok(this.workoutsRepository.findByNameLike(searchText));
     }
 
     @RequestMapping(

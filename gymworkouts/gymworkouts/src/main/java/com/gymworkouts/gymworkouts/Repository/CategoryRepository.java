@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
     Optional<CategoryEntity> findById(long categoryId);
+    Optional<CategoryEntity> findByNameLike(String searchTerm);
 }
