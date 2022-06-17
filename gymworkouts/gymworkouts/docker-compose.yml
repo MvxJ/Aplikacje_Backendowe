@@ -3,13 +3,18 @@ services:
   spring-boot-app:
     container_name: gym-workouts
     build: .
+    depends_on:
+      - database
     ports:
-     - "8080:8080"
+      - "8080:8080"
+    networks:
+      - gym-workouts-network
     environment:
       MYSQL_HOST: gym-workouts-database
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_PORT: 3306
+
   database:
     container_name: gym-workouts-database
     image: 'mysql:5.7'
@@ -19,3 +24,9 @@ services:
       MYSQL_DATABASE: gymworokoutslibrary
     ports:
       - "3307:3306"
+    networks:
+      - gym-workouts-network
+
+networks:
+  gym-workouts-network:
+    driver: bridge

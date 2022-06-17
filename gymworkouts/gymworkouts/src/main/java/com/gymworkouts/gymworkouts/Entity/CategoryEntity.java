@@ -23,6 +23,7 @@ public class CategoryEntity {
     @Column(name = "description")
     public String description;
 
-    @OneToMany(mappedBy = "category")
+    @ManyToOne
+    @JoinColumn(name = "workout_id")
     public List<WorkoutEntity> workouts;
 }

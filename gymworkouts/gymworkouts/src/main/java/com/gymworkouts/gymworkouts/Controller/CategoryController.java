@@ -101,7 +101,7 @@ public class CategoryController {
 
     @RequestMapping(
             value = "/category/add",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity createCategory(

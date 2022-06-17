@@ -2,12 +2,14 @@ package com.gymworkouts.gymworkouts.Controller;
 
 import com.gymworkouts.gymworkouts.Entity.UserEntity;
 import com.gymworkouts.gymworkouts.Repository.UserRepository;
+import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,6 +26,15 @@ public class UserController {
             @PathVariable long id
     ) {
         return ResponseEntity.of(this.userRepository.findById(id));
+    }
+
+    @RequestMapping(
+            value = "/user/",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<UserEntity>> getUsers() {
+        return ResponseEntity.ok(this.userRepository.findAll());
     }
 
     @RequestMapping(

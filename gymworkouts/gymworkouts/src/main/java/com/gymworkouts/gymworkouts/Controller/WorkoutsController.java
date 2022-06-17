@@ -1,9 +1,14 @@
 package com.gymworkouts.gymworkouts.Controller;
 
 import com.gymworkouts.gymworkouts.Entity.WorkoutEntity;
+import com.gymworkouts.gymworkouts.Repository.CategoryRepository;
 import com.gymworkouts.gymworkouts.Repository.WorkoutsRepository;
+import com.gymworkouts.gymworkouts.Requests.CreateWorkoutEntityRequest;
+import com.gymworkouts.gymworkouts.Requests.UpdateWorkoutEntityRequest;
+import com.gymworkouts.gymworkouts.Responses.CreateResponse;
+import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
+import com.gymworkouts.gymworkouts.Service.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,26 +21,22 @@ public class WorkoutsController {
     @Autowired
     private WorkoutsRepository workoutsRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private WorkoutService workoutService;
+
     @RequestMapping(
             value = "/workout/add",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity createWorkout(
-            @RequestBody WorkoutEntity workout
+    public CreateResponse createWorkout(
+            @RequestBody CreateWorkoutEntityRequest request
     ) {
-        try {
-            this.workoutsRepository.save(workout);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"true\"}");
-        } catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"false\"}");
-        }
+        return this.workoutService.createWorkout(request);
     }
 
     @RequestMapping(
@@ -81,24 +82,17 @@ public class WorkoutsController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity updateWorkout(
+    public UpdateResponse updateWorkout(
             @PathVariable long id,
-            @RequestBody WorkoutEntity workout
+            @RequestBody UpdateWorkoutEntityRequest updateWorkoutEntity
     ) {
         Optional<WorkoutEntity> foundWorkoutOptional = this.workoutsRepository.findById(id);
 
         if (foundWorkoutOptional.isPresent()) {
-            WorkoutEntity foundWorkoutEntity = foundWorkoutOptional.get();
-            foundWorkoutEntity.setDescription(workout.getDescription());
-            foundWorkoutEntity.setName(workout.getName());
-            foundWorkoutEntity.setSex(workout.getSex());
-            foundWorkoutEntity.setRecommendedWeight(workout.getRecommendedWeight());
-            foundWorkoutEntity.setRecommendedRepetitions(workout.getRecommendedRepetitions());
-
-            this.workoutsRepository.save(foundWorkoutEntity);
+            return this.workoutService.updateWorkout(foundWorkoutOptional.get(), updateWorkoutEntity);
         }
 
-        return ResponseEntity.of(foundWorkoutOptional);
+        return new UpdateResponse(false, "Workout entity not found!");
     }
 
     @RequestMapping(
