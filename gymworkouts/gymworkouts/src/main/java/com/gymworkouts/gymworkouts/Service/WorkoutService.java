@@ -8,8 +8,10 @@ import com.gymworkouts.gymworkouts.Repository.WorkoutsRepository;
 import com.gymworkouts.gymworkouts.Requests.CreateWorkoutEntityRequest;
 import com.gymworkouts.gymworkouts.Requests.UpdateWorkoutEntityRequest;
 import com.gymworkouts.gymworkouts.Responses.CreateResponse;
+import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +43,10 @@ public class WorkoutService {
             }
 
             this.workoutsRepository.save(workoutEntity);
-            UpdateResponse response = new UpdateResponse(true, "Successfully updated workout entity!");
 
-            return response;
+            return new UpdateResponse(true, "Successfully updated workout entity!");
         } catch (Exception exception) {
-            UpdateResponse response = new UpdateResponse(false, exception.getMessage());
-
-            return response;
+            return new UpdateResponse(false, exception.getMessage());
         }
     }
 
@@ -67,5 +66,21 @@ public class WorkoutService {
         } catch (Exception exception){
             return new CreateResponse(false, exception.getMessage(), null);
         }
+    }
+
+    public DeleteResponse deleteWorkout(Long workoutId) {
+        Optional<WorkoutEntity> foundWorkoutOptional = this.workoutsRepository.findById(workoutId);
+
+        if (foundWorkoutOptional.isPresent()) {
+            try {
+                this.workoutsRepository.deleteById(workoutId);
+
+                return new DeleteResponse(true, "Successfully deleted workout entity!");
+            } catch (Exception exception) {
+                return new DeleteResponse(false, exception.getMessage());
+            }
+        }
+
+        return new DeleteResponse(false, "Entity not found");
     }
 }

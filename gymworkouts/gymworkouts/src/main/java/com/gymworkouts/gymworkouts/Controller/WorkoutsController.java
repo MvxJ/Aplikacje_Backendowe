@@ -1,11 +1,11 @@
 package com.gymworkouts.gymworkouts.Controller;
 
 import com.gymworkouts.gymworkouts.Entity.WorkoutEntity;
-import com.gymworkouts.gymworkouts.Repository.CategoryRepository;
 import com.gymworkouts.gymworkouts.Repository.WorkoutsRepository;
 import com.gymworkouts.gymworkouts.Requests.CreateWorkoutEntityRequest;
 import com.gymworkouts.gymworkouts.Requests.UpdateWorkoutEntityRequest;
 import com.gymworkouts.gymworkouts.Responses.CreateResponse;
+import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import com.gymworkouts.gymworkouts.Service.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +20,6 @@ import java.util.Optional;
 public class WorkoutsController {
     @Autowired
     private WorkoutsRepository workoutsRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @Autowired
     private WorkoutService workoutService;
@@ -64,16 +61,10 @@ public class WorkoutsController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity deleteWorkout(
+    public DeleteResponse deleteWorkout(
             @PathVariable long id
     ) {
-        Optional<WorkoutEntity> foundWorkoutOptional = this.workoutsRepository.findById(id);
-
-        if (foundWorkoutOptional.isPresent()) {
-            this.workoutsRepository.deleteById(id);
-        }
-
-        return ResponseEntity.of(foundWorkoutOptional);
+        return this.workoutService.deleteWorkout(id);
     }
 
     @RequestMapping(
