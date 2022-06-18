@@ -57,7 +57,7 @@ public class CategoryController {
         Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(id);
 
         if (categoryEntity.isPresent()) {
-            this.categoryService.updateCategory(categoryEntity.get(), categoryRequest);
+            return this.categoryService.updateCategory(categoryEntity.get(), categoryRequest);
         }
 
         return new UpdateResponse(false, "Entity not found!");

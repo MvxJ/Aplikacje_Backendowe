@@ -1,7 +1,6 @@
 package com.gymworkouts.gymworkouts.Service;
 
 import com.gymworkouts.gymworkouts.Entity.CategoryEntity;
-import com.gymworkouts.gymworkouts.Entity.ImageEntity;
 import com.gymworkouts.gymworkouts.Entity.WorkoutEntity;
 import com.gymworkouts.gymworkouts.Repository.CategoryRepository;
 import com.gymworkouts.gymworkouts.Repository.WorkoutsRepository;
@@ -11,10 +10,7 @@ import com.gymworkouts.gymworkouts.Responses.CreateResponse;
 import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class WorkoutService {
