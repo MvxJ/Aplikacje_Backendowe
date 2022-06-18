@@ -10,13 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateWorkoutEntityRequest {
-    String workoutName;
-    String description;
-    Long categoryId;
-    String sex;
-    int recomendedWeight;
-    int recomendedRedemptions;
-    String smallImageUrl;
-    String mediumImageUrl;
-    String highImageUrl;
+    private String workoutName;
+    private String description;
+    private Long categoryId;
+    private String sex;
+    private int recomendedWeight;
+    private int recomendedRedemptions;
+    private String smallImageUrl;
+    private String mediumImageUrl;
+    private String highImageUrl;
 }

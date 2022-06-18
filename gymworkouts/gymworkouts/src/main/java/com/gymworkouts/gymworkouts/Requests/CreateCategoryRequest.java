@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateCategoryRequest {
-    String categoryName;
-    String description;
+    private String categoryName;
+    private String description;
 }

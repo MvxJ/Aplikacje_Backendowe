@@ -2,8 +2,13 @@ package com.gymworkouts.gymworkouts.Controller;
 
 import com.gymworkouts.gymworkouts.Entity.CategoryEntity;
 import com.gymworkouts.gymworkouts.Repository.CategoryRepository;
+import com.gymworkouts.gymworkouts.Requests.CreateCategoryRequest;
+import com.gymworkouts.gymworkouts.Requests.UpdateCategoryRequest;
+import com.gymworkouts.gymworkouts.Responses.CreateResponse;
+import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
+import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
+import com.gymworkouts.gymworkouts.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +20,9 @@ import java.util.Optional;
 public class CategoryController {
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryService categoryService;
 
     @RequestMapping(
             value = "/category",
@@ -42,32 +50,17 @@ public class CategoryController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity updateCategory(
+    public UpdateResponse updateCategory(
             @PathVariable long id,
-            @RequestBody CategoryEntity category
+            @RequestBody UpdateCategoryRequest categoryRequest
     ) {
         Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(id);
 
         if (categoryEntity.isPresent()) {
-            try {
-                CategoryEntity updateCategoryEntity = categoryEntity.get();
-                updateCategoryEntity.setDescription(category.getDescription());
-                updateCategoryEntity.setName(category.getName());
-                this.categoryRepository.save(updateCategoryEntity);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"result\":\"true\"}");
-            } catch (Exception exception){
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
+            this.categoryService.updateCategory(categoryEntity.get(), categoryRequest);
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found\"}");
+        return new UpdateResponse(false, "Entity not found!");
     }
 
     @RequestMapping(
@@ -75,28 +68,10 @@ public class CategoryController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity deleteCategory(
+    public DeleteResponse deleteCategory(
             @PathVariable long id
     ) {
-        Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(id);
-
-        if (categoryEntity.isPresent()) {
-            try {
-                this.categoryRepository.deleteById(id);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"result\":\"true\"}");
-            } catch (Exception exception) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found\"}");
+        return this.categoryService.deleteCategory(id);
     }
 
     @RequestMapping(
@@ -104,19 +79,9 @@ public class CategoryController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity createCategory(
-            @RequestBody CategoryEntity category
+    public CreateResponse createCategory(
+            @RequestBody CreateCategoryRequest categoryRequest
     ) {
-        try {
-            this.categoryRepository.save(category);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"true\"}");
-        } catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"false\"}");
-        }
+        return this.categoryService.createCategory(categoryRequest);
     }
 }

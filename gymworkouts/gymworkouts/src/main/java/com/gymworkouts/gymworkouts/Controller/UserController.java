@@ -2,7 +2,6 @@ package com.gymworkouts.gymworkouts.Controller;
 
 import com.gymworkouts.gymworkouts.Entity.UserEntity;
 import com.gymworkouts.gymworkouts.Repository.UserRepository;
-import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

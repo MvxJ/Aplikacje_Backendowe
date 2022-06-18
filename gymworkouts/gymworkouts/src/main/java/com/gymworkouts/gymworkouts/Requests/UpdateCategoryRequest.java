@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateCategoryRequest {
-    String categoryName;
-    String description;
-    Long addWorkoutId;
+    private String categoryName;
+    private String description;
+    private Long addWorkoutId;
 }
