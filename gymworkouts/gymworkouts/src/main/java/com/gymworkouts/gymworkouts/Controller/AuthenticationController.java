@@ -7,7 +7,9 @@ import com.gymworkouts.gymworkouts.Responses.CheckAccessResponse;
 import com.gymworkouts.gymworkouts.Responses.UserActionResponse;
 import com.gymworkouts.gymworkouts.Service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +28,7 @@ public class AuthenticationController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public AuthenticationResponse loginUser(
+    public ResponseEntity<AuthenticationResponse> loginUser(
             HttpServletRequest request,
             @RequestBody UserLoginRequest userLoginRequest
     ) {
@@ -38,7 +40,7 @@ public class AuthenticationController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public UserActionResponse logout(
+    public ResponseEntity<UserActionResponse> logout(
             HttpServletRequest request
     ) {
         return this.authService.logoutUser(request);
@@ -49,7 +51,7 @@ public class AuthenticationController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public UserActionResponse register(
+    public ResponseEntity<UserActionResponse> register(
             HttpServletRequest request,
             @RequestBody RegisterUserRequest registerUserRequest
     ) {
@@ -60,16 +62,20 @@ public class AuthenticationController {
             value = "/user/check",
             method = RequestMethod.POST
     )
-    public CheckAccessResponse checkUser(
+    public ResponseEntity<CheckAccessResponse> checkUser(
             HttpServletRequest request
     ) {
         HttpSession session = request.getSession();
         Long loggedUserId = this.authService.getLoggedUserId(session);
 
         if (loggedUserId == null) {
-            return new CheckAccessResponse(true, loggedUserId);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new CheckAccessResponse(true, loggedUserId));
         }
 
-        return new CheckAccessResponse(false, null);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new CheckAccessResponse(false, null));
     }
 }

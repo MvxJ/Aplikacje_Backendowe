@@ -10,6 +10,8 @@ import com.gymworkouts.gymworkouts.Responses.CreateResponse;
 import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class CategoryService {
     @Autowired
     private WorkoutsRepository workoutsRepository;
 
-    public UpdateResponse updateCategory(CategoryEntity categoryEntity, UpdateCategoryRequest request) {
+    public ResponseEntity<UpdateResponse> updateCategory(CategoryEntity categoryEntity, UpdateCategoryRequest request) {
         try {
             if (request.getCategoryName() != null) {
                 categoryEntity.setName(request.getCategoryName());
@@ -45,13 +47,17 @@ public class CategoryService {
             }
             this.categoryRepository.save(categoryEntity);
 
-            return new UpdateResponse(true, "Successfully updated category!");
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new UpdateResponse(true, "Successfully updated category!"));
         } catch (Exception exception){
-            return new UpdateResponse(false, exception.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UpdateResponse(false, exception.getMessage()));
         }
     }
 
-    public CreateResponse createCategory(CreateCategoryRequest request) {
+    public ResponseEntity<CreateResponse> createCategory(CreateCategoryRequest request) {
         try {
             CategoryEntity category = new CategoryEntity();
             category.setName(request.getCategoryName());
@@ -59,25 +65,35 @@ public class CategoryService {
 
             this.categoryRepository.save(category);
 
-            return new CreateResponse(true, "Successfully created category!", category);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new CreateResponse(true, "Successfully created category!", category));
         } catch (Exception exception) {
-            return new CreateResponse(false, exception.getMessage(), null);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CreateResponse(false, exception.getMessage(), null));
         }
     }
 
-    public DeleteResponse deleteCategory(Long categoryId) {
+    public ResponseEntity<DeleteResponse> deleteCategory(Long categoryId) {
         Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(categoryId);
 
         if (categoryEntity.isPresent()) {
             try {
                 this.categoryRepository.deleteById(categoryId);
 
-                return new DeleteResponse(true, "Successfully deleted category");
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(new DeleteResponse(true, "Successfully deleted category"));
             } catch (Exception exception) {
-                return new DeleteResponse(false, exception.getMessage());
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new DeleteResponse(false, exception.getMessage()));
             }
         }
 
-        return new DeleteResponse(false, "Entity not found!");
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new DeleteResponse(false, "Entity not found!"));
     }
 }

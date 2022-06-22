@@ -9,6 +9,7 @@ import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import com.gymworkouts.gymworkouts.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class CategoryController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public UpdateResponse updateCategory(
+    public ResponseEntity<UpdateResponse> updateCategory(
             @PathVariable long id,
             @RequestBody UpdateCategoryRequest categoryRequest
     ) {
@@ -60,7 +61,9 @@ public class CategoryController {
             return this.categoryService.updateCategory(categoryEntity.get(), categoryRequest);
         }
 
-        return new UpdateResponse(false, "Entity not found!");
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new UpdateResponse(false, "Entity not found!"));
     }
 
     @RequestMapping(
@@ -68,7 +71,7 @@ public class CategoryController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public DeleteResponse deleteCategory(
+    public ResponseEntity<DeleteResponse> deleteCategory(
             @PathVariable long id
     ) {
         return this.categoryService.deleteCategory(id);
@@ -79,7 +82,7 @@ public class CategoryController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public CreateResponse createCategory(
+    public ResponseEntity<CreateResponse> createCategory(
             @RequestBody CreateCategoryRequest categoryRequest
     ) {
         return this.categoryService.createCategory(categoryRequest);
