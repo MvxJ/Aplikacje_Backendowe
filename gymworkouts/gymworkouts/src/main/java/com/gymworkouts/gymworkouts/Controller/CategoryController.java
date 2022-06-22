@@ -19,10 +19,10 @@ import java.util.Optional;
 @RestController
 public class CategoryController {
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    CategoryService categoryService;
+    private CategoryService categoryService;
 
     @RequestMapping(
             value = "/category",

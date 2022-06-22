@@ -39,7 +39,8 @@ public class WorkoutEntity {
     @Column(name = "recommended_repetitions")
     public int recommendedRepetitions;
 
-    @OneToMany(mappedBy = "workouts")
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     public CategoryEntity category;
 
     @ManyToMany

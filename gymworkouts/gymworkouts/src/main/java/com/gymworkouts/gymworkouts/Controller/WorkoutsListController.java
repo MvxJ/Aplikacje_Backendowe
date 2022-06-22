@@ -1,44 +1,44 @@
 package com.gymworkouts.gymworkouts.Controller;
 
-import com.gymworkouts.gymworkouts.Entity.WorkoutEntity;
-import com.gymworkouts.gymworkouts.Entity.WorkoutListEntity;
 import com.gymworkouts.gymworkouts.Repository.WorkoutsListRepository;
 import com.gymworkouts.gymworkouts.Repository.WorkoutsRepository;
+import com.gymworkouts.gymworkouts.Requests.CreateWorkoutListRequest;
+import com.gymworkouts.gymworkouts.Requests.UpdateWorkoutListRequest;
+import com.gymworkouts.gymworkouts.Responses.CreateResponse;
+import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
+import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
+import com.gymworkouts.gymworkouts.Responses.WorkoutListActionResponse;
+import com.gymworkouts.gymworkouts.Service.WorkoutsListService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class WorkoutsListController {
     @Autowired
-    WorkoutsListRepository workoutListsRepository;
+    private WorkoutsListRepository workoutListsRepository;
 
     @Autowired
-    WorkoutsRepository workoutsRepository;
+    private WorkoutsRepository workoutsRepository;
+
+    @Autowired
+    private WorkoutsListService workoutsListService;
 
     @RequestMapping(
             value = "/user/workouts/list/create",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity addWorkoutsList(
-            @RequestBody WorkoutListEntity workoutList
+    public CreateResponse addWorkoutsList(
+            HttpServletRequest request,
+            @RequestBody CreateWorkoutListRequest workoutEntityRequest
     ) {
         try {
-            this.workoutListsRepository.save(workoutList);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"true\"}");
+            return this.workoutsListService.createList(request, workoutEntityRequest);
         } catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"false\"}");
+            return new CreateResponse(false, exception.getMessage(), null);
         }
     }
 
@@ -47,32 +47,16 @@ public class WorkoutsListController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity addWorkoutToList(
+    public WorkoutListActionResponse addWorkoutToList(
+            HttpServletRequest request,
             @RequestParam long workoutId,
             @RequestParam long listId
     ) {
-        Optional<WorkoutEntity> workout = this.workoutsRepository.findById(workoutId);
-        Optional<WorkoutListEntity> list = this.workoutListsRepository.findById(listId);
-
-        if (list.isPresent() && workout.isPresent()) {
-            try {
-                WorkoutEntity workoutEntity = workout.get();
-                WorkoutListEntity workoutList = list.get();
-                List<WorkoutEntity> workouts = workoutList.getWorkouts();
-                workouts.add(workoutEntity);
-                workoutList.setWorkouts(workouts);
-
-                this.workoutListsRepository.save(workoutList);
-            } catch (Exception exception) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
+        try {
+            return this.workoutsListService.addWorkoutToList(workoutId, listId, request);
+        } catch (Exception exception) {
+            return new WorkoutListActionResponse(false, exception.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found!\"}");
     }
 
     @RequestMapping(
@@ -80,32 +64,16 @@ public class WorkoutsListController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity removeWorkoutFromList(
+    public WorkoutListActionResponse removeWorkoutFromList(
+            HttpServletRequest request,
             @RequestParam long workoutId,
             @RequestParam long listId
     ) {
-        Optional<WorkoutEntity> workout = this.workoutsRepository.findById(workoutId);
-        Optional<WorkoutListEntity> list = this.workoutListsRepository.findById(listId);
-
-        if (list.isPresent() && workout.isPresent()) {
-            try {
-                WorkoutEntity workoutEntity = workout.get();
-                WorkoutListEntity workoutList = list.get();
-                List<WorkoutEntity> workouts = workoutList.getWorkouts();
-                workouts.remove(workoutEntity);
-                workoutList.setWorkouts(workouts);
-
-                this.workoutListsRepository.save(workoutList);
-            } catch (Exception exception) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
+        try {
+            return this.workoutsListService.removeWorkoutFromList(workoutId, listId, request);
+        } catch (Exception exception) {
+            return new WorkoutListActionResponse(false, exception.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found!\"}");
     }
 
     @RequestMapping(
@@ -113,28 +81,15 @@ public class WorkoutsListController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity removeWorkoutList(
+    public DeleteResponse removeWorkoutList(
+            HttpServletRequest request,
             @RequestParam long listId
     ) {
-        Optional<WorkoutListEntity> foundEntity = this.workoutListsRepository.findById(listId);
-
-        if (foundEntity.isPresent()) {
-            try {
-                this.workoutListsRepository.deleteById(listId);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"result\":\"true\"}");
-            } catch (Exception exception) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
+        try {
+            return this.workoutsListService.deleteList(listId, request);
+        } catch (Exception exception) {
+            return  new DeleteResponse(false, exception.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found!\"}");
     }
 
     @RequestMapping(
@@ -142,20 +97,15 @@ public class WorkoutsListController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity updateWorkoutList(
+    public UpdateResponse updateWorkoutList(
+            HttpServletRequest request,
             @RequestParam long listId,
-            @RequestBody WorkoutListEntity workoutList
+            @RequestBody UpdateWorkoutListRequest updateRequest
     ) {
-        Optional<WorkoutListEntity> foundListEntity = this.workoutListsRepository.findById(listId);
-
-        if (foundListEntity.isPresent()) {
-            WorkoutListEntity foundEntity = foundListEntity.get();
-            foundEntity.setDescription(workoutList.getDescription());
-            foundEntity.setName(workoutList.getName());
-
-            this.workoutListsRepository.save(foundEntity);
+        try {
+            return this.workoutsListService.updateList(listId, updateRequest, request);
+        } catch (Exception exception) {
+            return new UpdateResponse(false, exception.getMessage());
         }
-
-        return ResponseEntity.of(foundListEntity);
     }
 }

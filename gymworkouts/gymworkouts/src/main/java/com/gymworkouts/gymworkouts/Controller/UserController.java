@@ -2,19 +2,27 @@ package com.gymworkouts.gymworkouts.Controller;
 
 import com.gymworkouts.gymworkouts.Entity.UserEntity;
 import com.gymworkouts.gymworkouts.Repository.UserRepository;
+import com.gymworkouts.gymworkouts.Requests.UpdateUserRequest;
+import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
+import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
+import com.gymworkouts.gymworkouts.Responses.UserResponse;
+import com.gymworkouts.gymworkouts.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(
             value = "/user/{id}",
@@ -37,53 +45,20 @@ public class UserController {
     }
 
     @RequestMapping(
-            value = "/user/add",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity createUser(
-            @RequestBody UserEntity user
-    ) {
-        try {
-            this.userRepository.save(user);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"true\"}");
-        } catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"false\"}");
-        }
-    }
-
-    @RequestMapping(
             value = "/user/delete/{id}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity deleteUser(
+    public ResponseEntity<DeleteResponse> deleteUser(
         @PathVariable long id
     ) {
-        Optional<UserEntity> userEntity = this.userRepository.findById(id);
-
-        if (userEntity.isPresent()) {
-            try {
-                this.userRepository.deleteById(id);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"result\":\"true\"}");
-            } catch (Exception exception) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
+        try {
+            return this.userService.deleteUser(id);
+        } catch (Exception exception){
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new DeleteResponse(false, exception.getMessage()));
         }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found\"}");
     }
 
     @RequestMapping(
@@ -91,37 +66,29 @@ public class UserController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity updateUser(
+    public UpdateResponse updateUser(
             @PathVariable long id,
-            @RequestBody UserEntity user
+            @RequestBody UpdateUserRequest userRequest
     ) {
-        Optional<UserEntity> userEntity = this.userRepository.findById(id);
-
-        if (userEntity.isPresent()) {
-            try {
-                UserEntity updatedUserEntity = userEntity.get();
-                updatedUserEntity.setAge(user.getAge());
-                updatedUserEntity.setEmail(user.getEmail());
-                updatedUserEntity.setFirstName(user.getFirstName());
-                updatedUserEntity.setLastName(user.getLastName());
-                updatedUserEntity.setAge(user.getAge());
-                updatedUserEntity.setHeight(user.getHeight());
-                updatedUserEntity.setWeight(user.getWeight());
-                updatedUserEntity.setPassword(user.getPassword());
-                this.userRepository.save(updatedUserEntity);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"result\":\"true\"}");
-            } catch (Exception exception){
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
+        try {
+            return this.userService.updateUser(id, userRequest);
+        } catch (Exception exception) {
+            return new UpdateResponse(false, exception.getMessage());
         }
+    }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found\"}");
+    @RequestMapping(
+            value = "/user/profile",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public UserResponse getUserProfile(
+            HttpServletRequest request
+    ) {
+        try {
+            return this.userService.getProfile(request);
+        } catch (Exception exception) {
+            return new UserResponse(false, exception.getMessage(), null, null);
+        }
     }
 }

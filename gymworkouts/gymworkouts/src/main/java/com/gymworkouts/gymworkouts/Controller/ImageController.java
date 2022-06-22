@@ -14,7 +14,7 @@ import java.util.Optional;
 @RestController
 public class ImageController {
     @Autowired
-    ImageRepository imageRepository;
+    private ImageRepository imageRepository;
 
     @RequestMapping(
             value = "/image/add",

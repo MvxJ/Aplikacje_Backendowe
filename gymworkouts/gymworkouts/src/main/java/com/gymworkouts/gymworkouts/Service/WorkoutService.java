@@ -10,15 +10,17 @@ import com.gymworkouts.gymworkouts.Responses.CreateResponse;
 import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class WorkoutService {
     @Autowired
-    WorkoutsRepository workoutsRepository;
+    private WorkoutsRepository workoutsRepository;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     public UpdateResponse updateWorkout(WorkoutEntity workoutEntity, UpdateWorkoutEntityRequest updateRequest) {
         try {
