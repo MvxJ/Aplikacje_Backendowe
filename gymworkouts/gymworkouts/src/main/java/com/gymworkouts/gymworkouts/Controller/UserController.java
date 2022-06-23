@@ -66,14 +66,16 @@ public class UserController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public UpdateResponse updateUser(
+    public ResponseEntity<UpdateResponse> updateUser(
             @PathVariable long id,
             @RequestBody UpdateUserRequest userRequest
     ) {
         try {
             return this.userService.updateUser(id, userRequest);
         } catch (Exception exception) {
-            return new UpdateResponse(false, exception.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UpdateResponse(false, exception.getMessage()));
         }
     }
 
@@ -82,13 +84,15 @@ public class UserController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public UserResponse getUserProfile(
+    public ResponseEntity<UserResponse> getUserProfile(
             HttpServletRequest request
     ) {
         try {
             return this.userService.getProfile(request);
         } catch (Exception exception) {
-            return new UserResponse(false, exception.getMessage(), null, null);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UserResponse(false, exception.getMessage(), null, null));
         }
     }
 }

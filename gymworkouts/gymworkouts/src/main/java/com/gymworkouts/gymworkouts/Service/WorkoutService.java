@@ -10,6 +10,8 @@ import com.gymworkouts.gymworkouts.Responses.CreateResponse;
 import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,7 +24,10 @@ public class WorkoutService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public UpdateResponse updateWorkout(WorkoutEntity workoutEntity, UpdateWorkoutEntityRequest updateRequest) {
+    public ResponseEntity<UpdateResponse> updateWorkout(
+            WorkoutEntity workoutEntity,
+            UpdateWorkoutEntityRequest updateRequest
+    ) {
         try {
             if (updateRequest.getWorkoutName() != null) {
                 workoutEntity.setName(updateRequest.getWorkoutName());
@@ -42,13 +47,17 @@ public class WorkoutService {
 
             this.workoutsRepository.save(workoutEntity);
 
-            return new UpdateResponse(true, "Successfully updated workout entity!");
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new UpdateResponse(true, "Successfully updated workout entity!"));
         } catch (Exception exception) {
-            return new UpdateResponse(false, exception.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UpdateResponse(false, exception.getMessage()));
         }
     }
 
-    public CreateResponse createWorkout(CreateWorkoutEntityRequest requestEntity) {
+    public ResponseEntity<CreateResponse> createWorkout(CreateWorkoutEntityRequest requestEntity) {
 
         try {
             WorkoutEntity workout = new WorkoutEntity();
@@ -60,25 +69,35 @@ public class WorkoutService {
 
             workoutsRepository.save(workout);
 
-            return new CreateResponse(true, "Successfully created workout entity!", workout);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new CreateResponse(true, "Successfully created workout entity!", workout));
         } catch (Exception exception){
-            return new CreateResponse(false, exception.getMessage(), null);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CreateResponse(false, exception.getMessage(), null));
         }
     }
 
-    public DeleteResponse deleteWorkout(Long workoutId) {
+    public ResponseEntity<DeleteResponse> deleteWorkout(Long workoutId) {
         Optional<WorkoutEntity> foundWorkoutOptional = this.workoutsRepository.findById(workoutId);
 
         if (foundWorkoutOptional.isPresent()) {
             try {
                 this.workoutsRepository.deleteById(workoutId);
 
-                return new DeleteResponse(true, "Successfully deleted workout entity!");
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(new DeleteResponse(true, "Successfully deleted workout entity!"));
             } catch (Exception exception) {
-                return new DeleteResponse(false, exception.getMessage());
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new DeleteResponse(false, exception.getMessage()));
             }
         }
 
-        return new DeleteResponse(false, "Entity not found");
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new DeleteResponse(false, "Entity not found"));
     }
 }

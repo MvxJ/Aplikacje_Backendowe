@@ -13,6 +13,8 @@ import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import com.gymworkouts.gymworkouts.Responses.WorkoutListActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +35,10 @@ public class WorkoutsListService {
     @Autowired
     private WorkoutsRepository workoutsRepository;
 
-    public CreateResponse createList(HttpServletRequest request, CreateWorkoutListRequest workoutListRequest) {
+    public ResponseEntity<CreateResponse> createList(
+            HttpServletRequest request,
+            CreateWorkoutListRequest workoutListRequest
+    ) {
         if (this.authService.isUserLogged(request.getSession())) {
             Long userId = this.authService.getLoggedUserId(request.getSession());
             Optional<UserEntity> userOptional = this.userRepository.findById(userId);
@@ -46,16 +51,22 @@ public class WorkoutsListService {
 
                 this.workoutsListRepository.save(workoutList);
 
-                return new CreateResponse(true, "Successfully create workout list!", workoutList);
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(new CreateResponse(true, "Successfully create workout list!", workoutList));
             }
 
-            return new CreateResponse(false, "Can't find user id!", null);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new CreateResponse(false, "Can't find user id!", null));
         }
 
-        return new CreateResponse(false, "No logged in user", null);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new CreateResponse(false, "No logged in user", null));
     }
 
-    public UpdateResponse updateList(
+    public ResponseEntity<UpdateResponse> updateList(
             Long listId,
             UpdateWorkoutListRequest updateWorkoutListRequest,
             HttpServletRequest request
@@ -70,32 +81,48 @@ public class WorkoutsListService {
 
                 this.workoutsListRepository.save(foundEntity);
 
-                return new UpdateResponse(true, "Workout list was successfully updated");
+                ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(new UpdateResponse(true, "Workout list was successfully updated"));
             }
 
-            return new UpdateResponse(false, "Entity not found!");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new UpdateResponse(false, "Entity not found!"));
         }
 
-        return new UpdateResponse(false, "Required logged in user!");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new UpdateResponse(false, "Required logged in user!"));
     }
 
-    public DeleteResponse deleteList(Long listId, HttpServletRequest request) {
+    public ResponseEntity<DeleteResponse> deleteList(Long listId, HttpServletRequest request) {
         if (this.authService.isUserLogged(request.getSession())) {
             Optional<WorkoutListEntity> foundEntity = this.workoutsListRepository.findById(listId);
 
             if (foundEntity.isPresent()) {
                 this.workoutsListRepository.deleteById(listId);
 
-                return new DeleteResponse(true, "Successfully deleted workout list!");
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(new DeleteResponse(true, "Successfully deleted workout list!"));
             }
 
-            return new DeleteResponse(false, "Entity not found!");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new DeleteResponse(false, "Entity not found!"));
         }
 
-        return new DeleteResponse(false, "Required logged in user!");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new DeleteResponse(false, "Required logged in user!"));
     }
 
-    public WorkoutListActionResponse addWorkoutToList(Long workoutId, Long listId, HttpServletRequest request) {
+    public ResponseEntity<WorkoutListActionResponse> addWorkoutToList(
+            Long workoutId,
+            Long listId,
+            HttpServletRequest request
+    ) {
         if (this.authService.isUserLogged(request.getSession())) {
             Optional<WorkoutEntity> workout = this.workoutsRepository.findById(workoutId);
             Optional<WorkoutListEntity> list = this.workoutsListRepository.findById(listId);
@@ -109,16 +136,31 @@ public class WorkoutsListService {
 
                 this.workoutsListRepository.save(workoutList);
 
-                return new WorkoutListActionResponse(true, "Successfully added workout to list!");
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(
+                                new WorkoutListActionResponse(
+                                        true,
+                                        "Successfully added workout to list!"
+                                )
+                        );
             }
 
-            return new WorkoutListActionResponse(false, "Can't find requested entity!");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new WorkoutListActionResponse(false, "Entity not found!"));
         }
 
-        return new WorkoutListActionResponse(false, "Required logged in user!");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new WorkoutListActionResponse(false, "Required logged in user!"));
     }
 
-    public WorkoutListActionResponse removeWorkoutFromList(Long workoutId, Long listId, HttpServletRequest request) {
+    public ResponseEntity<WorkoutListActionResponse> removeWorkoutFromList(
+            Long workoutId,
+            Long listId,
+            HttpServletRequest request
+    ) {
         if (this.authService.isUserLogged(request.getSession())) {
             Optional<WorkoutEntity> workout = this.workoutsRepository.findById(workoutId);
             Optional<WorkoutListEntity> list = this.workoutsListRepository.findById(listId);
@@ -132,12 +174,23 @@ public class WorkoutsListService {
 
                 this.workoutsListRepository.save(workoutList);
 
-                return new WorkoutListActionResponse(true, "Successfully removed workout from list!");
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(
+                                new WorkoutListActionResponse(
+                                        true,
+                                        "Successfully removed workout from list!"
+                                )
+                        );
             }
 
-            return new WorkoutListActionResponse(false, "Can't find requested entity!");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new WorkoutListActionResponse(false, "Entity not found!"));
         }
 
-        return new WorkoutListActionResponse(false, "Required logged in user!");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new WorkoutListActionResponse(false, "Required logged in user!"));
     }
 }

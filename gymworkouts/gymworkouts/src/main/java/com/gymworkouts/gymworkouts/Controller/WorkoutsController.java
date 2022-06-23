@@ -9,6 +9,7 @@ import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import com.gymworkouts.gymworkouts.Service.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class WorkoutsController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public CreateResponse createWorkout(
+    public ResponseEntity<CreateResponse> createWorkout(
             @RequestBody CreateWorkoutEntityRequest request
     ) {
         return this.workoutService.createWorkout(request);
@@ -61,7 +62,7 @@ public class WorkoutsController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public DeleteResponse deleteWorkout(
+    public ResponseEntity<DeleteResponse> deleteWorkout(
             @PathVariable long id
     ) {
         return this.workoutService.deleteWorkout(id);
@@ -73,7 +74,7 @@ public class WorkoutsController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public UpdateResponse updateWorkout(
+    public ResponseEntity<UpdateResponse> updateWorkout(
             @PathVariable long id,
             @RequestBody UpdateWorkoutEntityRequest updateWorkoutEntity
     ) {
@@ -83,7 +84,9 @@ public class WorkoutsController {
             return this.workoutService.updateWorkout(foundWorkoutOptional.get(), updateWorkoutEntity);
         }
 
-        return new UpdateResponse(false, "Workout entity not found!");
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new UpdateResponse(false, "Workout entity not found!"));
     }
 
     @RequestMapping(

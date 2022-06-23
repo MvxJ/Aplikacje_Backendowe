@@ -10,7 +10,9 @@ import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import com.gymworkouts.gymworkouts.Responses.WorkoutListActionResponse;
 import com.gymworkouts.gymworkouts.Service.WorkoutsListService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,14 +33,16 @@ public class WorkoutsListController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public CreateResponse addWorkoutsList(
+    public ResponseEntity<CreateResponse> addWorkoutsList(
             HttpServletRequest request,
             @RequestBody CreateWorkoutListRequest workoutEntityRequest
     ) {
         try {
             return this.workoutsListService.createList(request, workoutEntityRequest);
         } catch (Exception exception){
-            return new CreateResponse(false, exception.getMessage(), null);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CreateResponse(false, exception.getMessage(), null));
         }
     }
 
@@ -47,7 +51,7 @@ public class WorkoutsListController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WorkoutListActionResponse addWorkoutToList(
+    public ResponseEntity<WorkoutListActionResponse> addWorkoutToList(
             HttpServletRequest request,
             @RequestParam long workoutId,
             @RequestParam long listId
@@ -55,7 +59,9 @@ public class WorkoutsListController {
         try {
             return this.workoutsListService.addWorkoutToList(workoutId, listId, request);
         } catch (Exception exception) {
-            return new WorkoutListActionResponse(false, exception.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new WorkoutListActionResponse(false, exception.getMessage()));
         }
     }
 
@@ -64,7 +70,7 @@ public class WorkoutsListController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WorkoutListActionResponse removeWorkoutFromList(
+    public ResponseEntity<WorkoutListActionResponse> removeWorkoutFromList(
             HttpServletRequest request,
             @RequestParam long workoutId,
             @RequestParam long listId
@@ -72,7 +78,9 @@ public class WorkoutsListController {
         try {
             return this.workoutsListService.removeWorkoutFromList(workoutId, listId, request);
         } catch (Exception exception) {
-            return new WorkoutListActionResponse(false, exception.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new WorkoutListActionResponse(false, exception.getMessage()));
         }
     }
 
@@ -81,14 +89,16 @@ public class WorkoutsListController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public DeleteResponse removeWorkoutList(
+    public ResponseEntity<DeleteResponse> removeWorkoutList(
             HttpServletRequest request,
             @RequestParam long listId
     ) {
         try {
             return this.workoutsListService.deleteList(listId, request);
         } catch (Exception exception) {
-            return  new DeleteResponse(false, exception.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new DeleteResponse(false, exception.getMessage()));
         }
     }
 
@@ -97,7 +107,7 @@ public class WorkoutsListController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public UpdateResponse updateWorkoutList(
+    public ResponseEntity<UpdateResponse> updateWorkoutList(
             HttpServletRequest request,
             @RequestParam long listId,
             @RequestBody UpdateWorkoutListRequest updateRequest
@@ -105,7 +115,9 @@ public class WorkoutsListController {
         try {
             return this.workoutsListService.updateList(listId, updateRequest, request);
         } catch (Exception exception) {
-            return new UpdateResponse(false, exception.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UpdateResponse(false, exception.getMessage()));
         }
     }
 }
