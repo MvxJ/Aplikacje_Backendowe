@@ -6,6 +6,7 @@ import com.gymworkouts.gymworkouts.Requests.RegisterUserRequest;
 import com.gymworkouts.gymworkouts.Requests.UserLoginRequest;
 import com.gymworkouts.gymworkouts.Responses.AuthenticationResponse;
 import com.gymworkouts.gymworkouts.Responses.UserActionResponse;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,8 @@ import java.util.Optional;
 public class AuthService {
     @Autowired
     private UserRepository userRepository;
+
+    private RabbitTemplate rabitTemplate;
 
     public ResponseEntity<UserActionResponse> registerUser(HttpServletRequest request, RegisterUserRequest registerUserRequest) {
         HttpSession session = request.getSession();
@@ -45,6 +48,8 @@ public class AuthService {
             userEntity.setEmail(registerUserRequest.getEmail());
 
             userRepository.save(userEntity);
+
+            rabitTemplate.convertAndSend("","user-registration", userEntity);
 
             return ResponseEntity
                     .status(HttpStatus.OK)

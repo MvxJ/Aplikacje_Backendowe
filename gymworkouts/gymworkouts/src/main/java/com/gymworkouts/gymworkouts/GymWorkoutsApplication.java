@@ -15,6 +15,7 @@ public class GymWorkoutsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GymWorkoutsApplication.class, args);
 	}
+
 	@Bean
 	public Docket gymworkoutsApi() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
