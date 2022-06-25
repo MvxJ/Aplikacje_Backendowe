@@ -48,9 +48,11 @@ public class AuthService {
             userEntity.setEmail(registerUserRequest.getEmail());
 
             userRepository.save(userEntity);
-            mailerService.setFrom("maksymilianjachymczak@gmail.com");
+            // TODO:: please insert your smtp creditentials
+            mailerService.setFrom("*********");
+            mailerService.setHost("*********");
+            mailerService.setPassword("*********");
             mailerService.setTo(userEntity.getEmail());
-            mailerService.setHost("smtp.gmail.com");
             mailerService.send(
                     "User registration confirmation",
                     "Your account was successfully created!"

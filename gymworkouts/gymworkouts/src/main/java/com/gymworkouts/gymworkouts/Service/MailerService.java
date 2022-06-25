@@ -18,6 +18,7 @@ public class MailerService {
     private String from;
     private String to;
     private String host;
+    private String password;
 
     public void send(String subject, String userMessage) {
         Properties properties = System.getProperties();
@@ -28,7 +29,7 @@ public class MailerService {
 
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(from, "******");
+                return new PasswordAuthentication(from, password);
             }
         });
 

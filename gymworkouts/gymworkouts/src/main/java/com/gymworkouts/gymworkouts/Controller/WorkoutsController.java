@@ -101,12 +101,14 @@ public class WorkoutsController {
     }
 
     @RequestMapping(
-            value = "/workout/category/{categoryId}",
+            value = "/workout/category/{categoryId}/{page}/{size}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<WorkoutEntity>> getWorkoutsByCategory(
-            @RequestParam long categoryId
+            @RequestParam long categoryId,
+            @RequestParam(required = false, defaultValue = "1") int pageNumber,
+            @RequestParam(required = false, defaultValue = "32") int size
     ) {
         return ResponseEntity.ok(this.workoutsRepository.findByCategoryId(categoryId));
     }
