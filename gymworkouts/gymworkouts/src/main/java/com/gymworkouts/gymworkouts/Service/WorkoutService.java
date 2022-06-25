@@ -67,6 +67,20 @@ public class WorkoutService {
             workout.setRecommendedRepetitions(requestEntity.getRecomendedRedemptions());
             workout.setRecommendedWeight(requestEntity.getRecomendedWeight());
 
+            if (requestEntity.getCategoryId() != null) {
+                Optional<CategoryEntity> optionalCategory = this.categoryRepository.findById(
+                        requestEntity.getCategoryId()
+                );
+
+                if (optionalCategory.isPresent()) {
+                    workout.setCategory(optionalCategory.get());
+                } else {
+                    return ResponseEntity
+                            .status(HttpStatus.NOT_FOUND)
+                            .body(new CreateResponse(false, "Entity not found!", null));
+                }
+            }
+
             workoutsRepository.save(workout);
 
             return ResponseEntity
