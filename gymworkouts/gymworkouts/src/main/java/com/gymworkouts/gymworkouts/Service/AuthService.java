@@ -6,7 +6,6 @@ import com.gymworkouts.gymworkouts.Requests.RegisterUserRequest;
 import com.gymworkouts.gymworkouts.Requests.UserLoginRequest;
 import com.gymworkouts.gymworkouts.Responses.AuthenticationResponse;
 import com.gymworkouts.gymworkouts.Responses.UserActionResponse;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,8 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    private RabbitTemplate rabitTemplate;
+    @Autowired
+    private MailerService mailerService;
 
     public ResponseEntity<UserActionResponse> registerUser(HttpServletRequest request, RegisterUserRequest registerUserRequest) {
         HttpSession session = request.getSession();
@@ -48,8 +48,13 @@ public class AuthService {
             userEntity.setEmail(registerUserRequest.getEmail());
 
             userRepository.save(userEntity);
-
-            rabitTemplate.convertAndSend("","user-registration", userEntity);
+            mailerService.setFrom("maksymilianjachymczak@gmail.com");
+            mailerService.setTo(userEntity.getEmail());
+            mailerService.setHost("smtp.gmail.com");
+            mailerService.send(
+                    "User registration confirmation",
+                    "Your account was successfully created!"
+            );
 
             return ResponseEntity
                     .status(HttpStatus.OK)

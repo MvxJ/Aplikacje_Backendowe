@@ -16,7 +16,7 @@ services:
       MYSQL_PORT: 3306
 
   database:
-    container_name: gym-workouts-database
+    container_name: database
     image: 'mysql:5.7'
     environment:
       MYSQL_ROOT_PASSWORD: root
