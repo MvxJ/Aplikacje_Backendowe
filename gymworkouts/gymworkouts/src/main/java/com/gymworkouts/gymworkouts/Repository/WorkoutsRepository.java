@@ -12,6 +12,5 @@ public interface WorkoutsRepository extends JpaRepository<WorkoutEntity, Long>, 
     Optional<WorkoutEntity> findById(long workoutId);
     List<WorkoutEntity> findByCategoryId(long categoryId, PageRequest pageRequest);
     List<WorkoutEntity> findAll();
-    List<WorkoutEntity> findWorkoutByNameOrDescription(String nameKeyWord, String descriptionKeyWord);
     List<WorkoutEntity> findWorkoutByNameIsContainingOrDescriptionIsContaining(String nameKeyWord, String descriptionKeyWord);
 }
