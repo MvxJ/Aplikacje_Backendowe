@@ -1,7 +1,7 @@
 version: "3"
 services:
-  spring-boot-app:
-    container_name: gym-workouts
+  gym-users:
+    container_name: gym-users
     build: .
     depends_on:
       - database
@@ -21,11 +21,13 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: root
-      MYSQL_DATABASE: gymworokoutslibrary
+      MYSQL_DATABASE: main
     ports:
       - "3307:3306"
     networks:
       - gym-workouts-network
+    volumes:
+      - database-volume:/var/lib/mysql
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -42,3 +44,6 @@ services:
 networks:
   gym-workouts-network:
     driver: bridge
+
+volumes:
+  database-volume:

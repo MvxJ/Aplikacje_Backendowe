@@ -38,13 +38,6 @@ public class WorkoutService {
             workoutEntity.setRecommendedWeight(updateRequest.getRecomendedWeight());
             workoutEntity.setRecommendedRepetitions(updateRequest.getRecomendedRedemption());
 
-            Optional<CategoryEntity> category = categoryRepository.findById(updateRequest.getCategoryId());
-
-            if (category.isPresent()) {
-                CategoryEntity newCategory = category.get();
-                workoutEntity.setCategory(newCategory);
-            }
-
             this.workoutsRepository.save(workoutEntity);
 
             return ResponseEntity
@@ -66,20 +59,6 @@ public class WorkoutService {
             workout.setDescription(requestEntity.getDescription());
             workout.setRecommendedRepetitions(requestEntity.getRecomendedRedemptions());
             workout.setRecommendedWeight(requestEntity.getRecomendedWeight());
-
-            if (requestEntity.getCategoryId() != null) {
-                Optional<CategoryEntity> optionalCategory = this.categoryRepository.findById(
-                        requestEntity.getCategoryId()
-                );
-
-                if (optionalCategory.isPresent()) {
-                    workout.setCategory(optionalCategory.get());
-                } else {
-                    return ResponseEntity
-                            .status(HttpStatus.NOT_FOUND)
-                            .body(new CreateResponse(false, "Entity not found!", null));
-                }
-            }
 
             workoutsRepository.save(workout);
 
@@ -113,5 +92,38 @@ public class WorkoutService {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new DeleteResponse(false, "Entity not found"));
+    }
+
+    public ResponseEntity<UpdateResponse> addCategoryToWorkout(long workoutId, long categoryId) {
+        try {
+            if (workoutId >= 0 && categoryId >= 0) {
+                Optional<CategoryEntity> optionalCategory = this.categoryRepository.findById(categoryId);
+                Optional<WorkoutEntity> optionalWorkout = this.workoutsRepository.findById(workoutId);
+
+                if (optionalCategory.isPresent() && optionalWorkout.isPresent()) {
+                    WorkoutEntity workout = optionalWorkout.get();
+                    workout.setCategory(optionalCategory.get());
+                    workout.setCategoryId(optionalCategory.get().getId());
+
+                    this.workoutsRepository.save(workout);
+
+                    return ResponseEntity
+                            .status(HttpStatus.OK)
+                            .body(new UpdateResponse(true, "Successfully added category to workout!"));
+                }
+
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new UpdateResponse(false, "Entity not found!"));
+            }
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new UpdateResponse(false, "Bad request!"));
+        } catch (Exception exception) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UpdateResponse(false, exception.getMessage()));
+        }
     }
 }

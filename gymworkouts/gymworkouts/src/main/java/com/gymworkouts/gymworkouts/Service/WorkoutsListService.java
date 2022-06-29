@@ -47,7 +47,7 @@ public class WorkoutsListService {
                 WorkoutListEntity workoutList = new WorkoutListEntity();
                 workoutList.setName(workoutListRequest.getName());
                 workoutList.setDescription(workoutListRequest.getDescription());
-                workoutList.setUser(userOptional.get());
+                workoutList.assignUserToList(userOptional.get());
 
                 this.workoutsListRepository.save(workoutList);
 
@@ -130,9 +130,8 @@ public class WorkoutsListService {
             if (list.isPresent() && workout.isPresent()) {
                 WorkoutEntity workoutEntity = workout.get();
                 WorkoutListEntity workoutList = list.get();
-                List<WorkoutEntity> workouts = workoutList.getWorkouts();
-                workouts.add(workoutEntity);
-                workoutList.setWorkouts(workouts);
+
+                workoutList.addWorkoutToList(workoutEntity);
 
                 this.workoutsListRepository.save(workoutList);
 

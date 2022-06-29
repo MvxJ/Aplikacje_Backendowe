@@ -1,5 +1,6 @@
 package com.gymworkouts.gymworkouts.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,18 +16,32 @@ import java.util.List;
 public class WorkoutListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    private long id;
 
     @Column(name = "name")
-    public String name;
+    private String name;
 
     @Column(name = "description")
-    public String description;
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    public UserEntity user;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "id"
+    )
+    private UserEntity user;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "workoutsLists")
-    public List<WorkoutEntity> workouts;
+    private List<WorkoutEntity> workouts;
+
+    public void addWorkoutToList(WorkoutEntity workout)
+    {
+        workouts.add(workout);
+    }
+
+    public void assignUserToList(UserEntity user)
+    {
+        this.user = user;
+    }
 }

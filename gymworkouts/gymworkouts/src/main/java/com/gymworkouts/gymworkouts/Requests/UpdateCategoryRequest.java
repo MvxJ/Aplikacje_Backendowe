@@ -12,5 +12,4 @@ import lombok.Setter;
 public class UpdateCategoryRequest {
     private String categoryName;
     private String description;
-    private Long addWorkoutId;
 }

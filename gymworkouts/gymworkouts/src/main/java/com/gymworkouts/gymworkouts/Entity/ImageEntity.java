@@ -1,5 +1,6 @@
 package com.gymworkouts.gymworkouts.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,20 +16,21 @@ import java.util.List;
 public class ImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    private long id;
 
     @Column(name = "url_small")
-    public String urlSmall;
+    private String urlSmall;
 
     @Column(name = "url_medium")
-    public String urlMedium;
+    private String urlMedium;
 
     @Column(name = "url_high")
-    public String urlHigh;
+    private String urlHigh;
 
+    @JsonIgnore
     @Column(name = "workouts")
     @ManyToMany(mappedBy = "images")
-    public List<WorkoutEntity> workouts;
+    private List<WorkoutEntity> workouts;
 
     public String getUrlSmall() {
         return urlSmall;

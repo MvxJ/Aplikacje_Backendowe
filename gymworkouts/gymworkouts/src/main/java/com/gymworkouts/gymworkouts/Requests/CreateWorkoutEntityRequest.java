@@ -12,7 +12,6 @@ import lombok.Setter;
 public class CreateWorkoutEntityRequest {
     private String workoutName;
     private String description;
-    private Long categoryId;
     private String sex;
     private int recomendedWeight;
     private int recomendedRedemptions;

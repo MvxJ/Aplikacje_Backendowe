@@ -87,4 +87,28 @@ public class CategoryController {
     ) {
         return this.categoryService.createCategory(categoryRequest);
     }
+
+    @RequestMapping(
+            value = "/category/{categoryId}/workout/{workoutId}",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<UpdateResponse> addWorkoutToCategory(
+            @PathVariable long categoryId,
+            @PathVariable long workoutId
+    ) {
+        return this.categoryService.addWorkoutToCategory(categoryId, workoutId);
+    }
+
+    @RequestMapping(
+            value = "/category/{categoryId}/remove/{workoutId}",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<UpdateResponse> removeWorkoutFromCategory(
+            @PathVariable long categoryId,
+            @PathVariable long workoutId
+    ) {
+        return this.categoryService.removeWorkout(categoryId, workoutId);
+    }
 }
