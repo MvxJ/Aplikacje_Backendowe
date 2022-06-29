@@ -24,6 +24,9 @@ public class AuthService {
     @Autowired
     private MailerService mailerService;
 
+    @Autowired
+    private PasswordService passwordService;
+
     public ResponseEntity<UserActionResponse> registerUser(HttpServletRequest request, RegisterUserRequest registerUserRequest) {
         HttpSession session = request.getSession();
 
@@ -40,10 +43,12 @@ public class AuthService {
         }
 
         try {
+            String encodedPassword = this.passwordService.encodePassword(registerUserRequest.getPassword());
+
             UserEntity userEntity = new UserEntity();
             userEntity.setFirstName(registerUserRequest.getFirstName());
             userEntity.setLastName(registerUserRequest.getLastName());
-            userEntity.setPassword(registerUserRequest.getPassword());
+            userEntity.setPassword(encodedPassword);
             userEntity.setUsername(registerUserRequest.getUserName());
             userEntity.setEmail(registerUserRequest.getEmail());
 
@@ -81,8 +86,9 @@ public class AuthService {
 
         if (userOptional.isPresent()) {
             UserEntity userEntity = userOptional.get();
+            String decodedPassword = this.passwordService.decodePassword(userEntity.getPassword());
 
-            if (Objects.equals(userLoginRequest.getPassword(), userOptional.get().getPassword())) {
+            if (userLoginRequest.getPassword().equals(decodedPassword)) {
                 session.setAttribute("LOGGED_USER_ID", userEntity.getId());
 
                 return ResponseEntity
