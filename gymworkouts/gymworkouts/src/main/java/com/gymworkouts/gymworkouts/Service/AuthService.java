@@ -27,6 +27,9 @@ public class AuthService {
     @Autowired
     private PasswordService passwordService;
 
+    @Autowired
+    private ProducerService producerService;
+
     public ResponseEntity<UserActionResponse> registerUser(HttpServletRequest request, RegisterUserRequest registerUserRequest) {
         HttpSession session = request.getSession();
 
@@ -51,6 +54,10 @@ public class AuthService {
             userEntity.setPassword(encodedPassword);
             userEntity.setUsername(registerUserRequest.getUserName());
             userEntity.setEmail(registerUserRequest.getEmail());
+
+            this.producerService.sendMessage(
+                    "Register user request: " + userEntity.getEmail() + ", " + userEntity.getUsername()
+            );
 
             userRepository.save(userEntity);
             // TODO:: please insert your smtp creditentials
