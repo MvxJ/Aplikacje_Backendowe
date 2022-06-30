@@ -103,7 +103,6 @@ public class WorkoutService {
                 if (optionalCategory.isPresent() && optionalWorkout.isPresent()) {
                     WorkoutEntity workout = optionalWorkout.get();
                     workout.setCategory(optionalCategory.get());
-                    workout.setCategoryId(optionalCategory.get().getId());
 
                     this.workoutsRepository.save(workout);
 

@@ -57,9 +57,6 @@ public class WorkoutEntity {
     )
     private List<WorkoutListEntity> workoutsLists;
 
-    @Column(name = "cat_id")
-    private long categoryId;
-
     public long getId() {
         return id;
     }

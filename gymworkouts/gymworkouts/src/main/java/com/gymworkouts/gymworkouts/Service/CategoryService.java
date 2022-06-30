@@ -102,7 +102,6 @@ public class CategoryService {
                 CategoryEntity categoryEntity = category.get();
                 categoryEntity.assignWorkout(workout.get());
                 WorkoutEntity workoutEntity = workout.get();
-                workoutEntity.setCategoryId(categoryEntity.getId());
 
                 this.workoutsRepository.save(workoutEntity);
                 this.categoryRepository.save(categoryEntity);
@@ -132,7 +131,6 @@ public class CategoryService {
                     CategoryEntity category = optionalCategory.get();
                     category.removeWorkout(optionalWorkout.get());
                     WorkoutEntity workoutEntity = optionalWorkout.get();
-                    workoutEntity.setCategoryId(0);
 
                     this.workoutsRepository.save(workoutEntity);
                     this.categoryRepository.save(category);
