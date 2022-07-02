@@ -22,13 +22,13 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Autowired
-    private MailerService mailerService;
-
-    @Autowired
     private PasswordService passwordService;
 
     @Autowired
     private ProducerService producerService;
+
+    @Autowired
+    private MailerService mailerService;
 
     public ResponseEntity<UserActionResponse> registerUser(HttpServletRequest request, RegisterUserRequest registerUserRequest) {
         HttpSession session = request.getSession();
@@ -55,12 +55,7 @@ public class AuthService {
             userEntity.setUsername(registerUserRequest.getUserName());
             userEntity.setEmail(registerUserRequest.getEmail());
 
-            this.producerService.sendMessage(
-                    "Register user request: " + userEntity.getEmail() + ", " + userEntity.getUsername()
-            );
-
-            userRepository.save(userEntity);
-            // TODO:: please insert your smtp creditentials
+            //TODO:: Please insert smtp data
             mailerService.setFrom("*********");
             mailerService.setHost("*********");
             mailerService.setPassword("*********");
@@ -69,6 +64,10 @@ public class AuthService {
                     "User registration confirmation",
                     "Your account was successfully created!"
             );
+
+            this.producerService.sendMessage(userEntity.getEmail());
+
+            userRepository.save(userEntity);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -80,7 +79,10 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<AuthenticationResponse> loginUser(HttpServletRequest request, UserLoginRequest userLoginRequest) {
+    public ResponseEntity<AuthenticationResponse> loginUser(
+            HttpServletRequest request,
+            UserLoginRequest userLoginRequest
+    ) {
         HttpSession session = request.getSession();
 
         if (this.isUserLogged(session)) {

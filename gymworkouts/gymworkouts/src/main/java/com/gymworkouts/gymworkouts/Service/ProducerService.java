@@ -10,7 +10,10 @@ public class ProducerService {
     @Autowired
     private RabbitTemplate template;
 
-    public void sendMessage(String message) {
-        this.template.convertAndSend("register-queue", message);
+    public void sendMessage(String email) {
+        this.template.convertAndSend(
+                "register-queue",
+                email
+        );
     }
 }
