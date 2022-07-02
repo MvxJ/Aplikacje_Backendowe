@@ -1,8 +1,20 @@
 version: "3"
 services:
-  spring-boot-app:
-    container_name: gym-workouts
-    build: .
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./Docker/Nginx/Dockerfile
+    networks:
+      - gym-workouts-network
+    ports:
+      - "80:80"
+
+  gym-users:
+    container_name: gym-users
+    build:
+      context: .
+      dockerfile: ./Docker/GymWorkoutsUsers/Dockerfile
     depends_on:
       - database
     ports:
@@ -16,14 +28,28 @@ services:
       MYSQL_PORT: 3306
 
   database:
-    container_name: gym-workouts-database
+    container_name: database
     image: 'mysql:5.7'
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: root
-      MYSQL_DATABASE: gymworokoutslibrary
+      MYSQL_DATABASE: main
     ports:
       - "3307:3306"
+    networks:
+      - gym-workouts-network
+    volumes:
+      - database-volume:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - gym-workouts-network
 
@@ -42,3 +68,6 @@ services:
 networks:
   gym-workouts-network:
     driver: bridge
+
+volumes:
+  database-volume:

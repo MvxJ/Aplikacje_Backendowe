@@ -1,5 +1,6 @@
 package com.gymworkouts.gymworkouts.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,14 +16,22 @@ import java.util.List;
 public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    private long id;
 
     @Column(name = "name", nullable = false, unique = true)
-    public String name;
+    private String name;
 
     @Column(name = "description")
-    public String description;
+    private String description;
 
     @OneToMany(mappedBy = "category")
-    public List<WorkoutEntity> workouts;
+    private List<WorkoutEntity> workouts;
+
+    public void assignWorkout(WorkoutEntity workout) {
+        this.workouts.add(workout);
+    }
+
+    public void removeWorkout(WorkoutEntity workout) {
+        this.workouts.remove(workout);
+    }
 }

@@ -2,39 +2,32 @@ package com.gymworkouts.gymworkouts.Controller;
 
 import com.gymworkouts.gymworkouts.Entity.ImageEntity;
 import com.gymworkouts.gymworkouts.Repository.ImageRepository;
+import com.gymworkouts.gymworkouts.Responses.CreateResponse;
+import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
+import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
+import com.gymworkouts.gymworkouts.Service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.*;
-import java.util.Optional;
 
 @RestController
 public class ImageController {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private ImageService imageService;
+
     @RequestMapping(
             value = "/image/add",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity addImage(
+    public ResponseEntity<CreateResponse> addImage(
             @RequestBody ImageEntity image
     ) {
-        try {
-            this.imageRepository.save(image);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"true\"}");
-        } catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"result\":\"false\"}");
-        }
+        return this.imageService.createImage(image);
     }
 
     @RequestMapping(
@@ -42,28 +35,10 @@ public class ImageController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity deleteImage(
+    public ResponseEntity<DeleteResponse> deleteImage(
             @PathVariable long id
     ) {
-        Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
-
-        if (imageEntity.isPresent()) {
-            try {
-                this.imageRepository.deleteById(id);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"result\":\"true\"}");
-            } catch (Exception exception) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found\"}");
+        return this.imageService.deleteImage(id);
     }
 
     @RequestMapping(
@@ -82,32 +57,10 @@ public class ImageController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity updateImage(
+    public ResponseEntity<UpdateResponse> updateImage(
             @PathVariable long id,
             @RequestBody ImageEntity image
     ) {
-        Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
-
-        if (imageEntity.isPresent()) {
-            try {
-                ImageEntity updateImageEntity = imageEntity.get();
-                updateImageEntity.setUrlSmall(image.getUrlSmall());
-                updateImageEntity.setUrlMedium(image.getUrlMedium());
-                updateImageEntity.setUrlHigh(image.getUrlHigh());
-
-                this.imageRepository.save(updateImageEntity);
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"result\":\"true\"}");
-            } catch (Exception exception){
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"error\":\"" + exception.getMessage() + "\"}");
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"error\":\"Entity not found\"}");
+        return this.imageService.updateImage(id, image);
     }
 }

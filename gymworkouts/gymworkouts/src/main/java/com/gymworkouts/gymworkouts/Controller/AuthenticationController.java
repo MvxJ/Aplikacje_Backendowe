@@ -68,7 +68,7 @@ public class AuthenticationController {
         HttpSession session = request.getSession();
         Long loggedUserId = this.authService.getLoggedUserId(session);
 
-        if (loggedUserId == null) {
+        if (loggedUserId != null) {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new CheckAccessResponse(true, loggedUserId));

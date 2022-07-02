@@ -9,6 +9,7 @@ import com.gymworkouts.gymworkouts.Responses.DeleteResponse;
 import com.gymworkouts.gymworkouts.Responses.UpdateResponse;
 import com.gymworkouts.gymworkouts.Service.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -90,24 +91,43 @@ public class WorkoutsController {
     }
 
     @RequestMapping(
+            value = "/workout/{workoutId}/category/{categoryId}}",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<UpdateResponse> addCateogryToWorkout(
+            @PathVariable long workoutId,
+            @PathVariable long categoryId
+    ) {
+        return this.workoutService.addCategoryToWorkout(workoutId, categoryId);
+    }
+
+    @RequestMapping(
             value = "/workout/search",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<WorkoutEntity>> searchWokout(
-            @RequestBody String searchText
+            @RequestParam String searchText
     ) {
-        return ResponseEntity.ok(this.workoutsRepository.findByNameLike(searchText));
+        return ResponseEntity.ok(
+                this.workoutsRepository.findWorkoutByNameIsContainingOrDescriptionIsContaining(
+                    searchText,
+                    searchText
+                )
+        );
     }
 
     @RequestMapping(
-            value = "/workout/category/{categoryId}",
+            value = "/workout/category/{categoryId}/{page}/{size}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<WorkoutEntity>> getWorkoutsByCategory(
-            @RequestParam long categoryId
+            @RequestParam long categoryId,
+            @RequestParam(required = false, defaultValue = "1") int pageNumber,
+            @RequestParam(required = false, defaultValue = "32") int size
     ) {
-        return ResponseEntity.ok(this.workoutsRepository.findByCategoryId(categoryId));
+        return ResponseEntity.ok(this.workoutsRepository.findByCategoryId(categoryId, PageRequest.of(pageNumber - 1, size)));
     }
 }

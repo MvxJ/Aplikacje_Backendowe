@@ -14,9 +14,5 @@ public class UpdateWorkoutEntityRequest {
     private String description;
     private int recomendedWeight;
     private int recomendedRedemption;
-    private String urlSmall;
-    private String urlMedium;
-    private String urlHigh;
     private String sex;
-    private Long categoryId;
 }

@@ -6,7 +6,6 @@ import com.gymworkouts.gymworkouts.Requests.RegisterUserRequest;
 import com.gymworkouts.gymworkouts.Requests.UserLoginRequest;
 import com.gymworkouts.gymworkouts.Responses.AuthenticationResponse;
 import com.gymworkouts.gymworkouts.Responses.UserActionResponse;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,14 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    private RabbitTemplate rabitTemplate;
+    @Autowired
+    private PasswordService passwordService;
+
+    @Autowired
+    private ProducerService producerService;
+
+    @Autowired
+    private MailerService mailerService;
 
     public ResponseEntity<UserActionResponse> registerUser(HttpServletRequest request, RegisterUserRequest registerUserRequest) {
         HttpSession session = request.getSession();
@@ -40,16 +46,28 @@ public class AuthService {
         }
 
         try {
+            String encodedPassword = this.passwordService.encodePassword(registerUserRequest.getPassword());
+
             UserEntity userEntity = new UserEntity();
             userEntity.setFirstName(registerUserRequest.getFirstName());
             userEntity.setLastName(registerUserRequest.getLastName());
-            userEntity.setPassword(registerUserRequest.getPassword());
+            userEntity.setPassword(encodedPassword);
             userEntity.setUsername(registerUserRequest.getUserName());
             userEntity.setEmail(registerUserRequest.getEmail());
 
-            userRepository.save(userEntity);
+            //TODO:: Please insert smtp data
+            mailerService.setFrom("*********");
+            mailerService.setHost("*********");
+            mailerService.setPassword("*********");
+            mailerService.setTo(userEntity.getEmail());
+            mailerService.send(
+                    "User registration confirmation",
+                    "Your account was successfully created!"
+            );
 
-            rabitTemplate.convertAndSend("","user-registration", userEntity);
+            this.producerService.sendMessage(userEntity.getEmail());
+
+            userRepository.save(userEntity);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -61,7 +79,10 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<AuthenticationResponse> loginUser(HttpServletRequest request, UserLoginRequest userLoginRequest) {
+    public ResponseEntity<AuthenticationResponse> loginUser(
+            HttpServletRequest request,
+            UserLoginRequest userLoginRequest
+    ) {
         HttpSession session = request.getSession();
 
         if (this.isUserLogged(session)) {
@@ -74,8 +95,9 @@ public class AuthService {
 
         if (userOptional.isPresent()) {
             UserEntity userEntity = userOptional.get();
+            String decodedPassword = this.passwordService.decodePassword(userEntity.getPassword());
 
-            if (Objects.equals(userLoginRequest.getPassword(), userOptional.get().getPassword())) {
+            if (userLoginRequest.getPassword().equals(decodedPassword)) {
                 session.setAttribute("LOGGED_USER_ID", userEntity.getId());
 
                 return ResponseEntity

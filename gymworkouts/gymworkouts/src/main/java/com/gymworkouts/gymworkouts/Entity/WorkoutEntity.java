@@ -1,5 +1,6 @@
 package com.gymworkouts.gymworkouts.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import java.util.List;
@@ -14,42 +15,47 @@ import java.util.List;
 public class WorkoutEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    private long id;
 
     @Column(name = "name", nullable = false, unique = true)
-    public String name;
+    private String name;
 
     @Column(name = "description")
-    public String description;
+    private String description;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "workouts_images",
             joinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "workout_id", referencedColumnName = "id")
     )
-    public List<ImageEntity> images;
+    private List<ImageEntity> images;
 
     @Column(name = "sex")
-    public String sex;
+    private String sex;
 
     @Column(name = "recommended_weight")
-    public int recommendedWeight;
+    private int recommendedWeight;
 
     @Column(name = "recommended_repetitions")
-    public int recommendedRepetitions;
+    private int recommendedRepetitions;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    public CategoryEntity category;
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(
+            name = "category_id",
+            referencedColumnName = "id"
+    )
+    private CategoryEntity category;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name="workouts_list_in_lists",
-            joinColumns = @JoinColumn(name = "list_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "workout_id", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "list_id"),
+            inverseJoinColumns = @JoinColumn(name = "workout_id")
     )
-    public List<WorkoutListEntity> workoutsLists;
+    private List<WorkoutListEntity> workoutsLists;
 
     public long getId() {
         return id;
