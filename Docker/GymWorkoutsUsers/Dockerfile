@@ -1,11 +1,10 @@
 FROM openjdk:11.0.14
-
 # For Windows and Linux
 WORKDIR /app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+COPY ./gymworkouts/gymworkouts/.mvn/ .mvn
+COPY ./gymworkouts/gymworkouts/mvnw ./gymworkouts/gymworkouts/pom.xml ./
 RUN ./mvnw dependency:go-offline
-COPY src ./src
+COPY ./gymworkouts/gymworkouts/src ./src
 CMD ["./mvnw", "spring-boot:run"]
 
 # For MacOs

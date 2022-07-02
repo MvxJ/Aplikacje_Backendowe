@@ -1,8 +1,20 @@
 version: "3"
 services:
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./Docker/Nginx/Dockerfile
+    networks:
+      - gym-workouts-network
+    ports:
+      - "80:80"
+
   gym-users:
     container_name: gym-users
-    build: .
+    build:
+      context: .
+      dockerfile: ./Docker/GymWorkoutsUsers/Dockerfile
     depends_on:
       - database
     ports:

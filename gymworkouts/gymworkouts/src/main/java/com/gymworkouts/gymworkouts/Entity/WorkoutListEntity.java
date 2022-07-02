@@ -24,6 +24,7 @@ public class WorkoutListEntity {
     @Column(name = "description")
     private String description;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "user_id",
@@ -31,7 +32,6 @@ public class WorkoutListEntity {
     )
     private UserEntity user;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "workoutsLists")
     private List<WorkoutEntity> workouts;
 

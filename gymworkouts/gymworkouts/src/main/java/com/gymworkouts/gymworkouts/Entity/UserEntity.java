@@ -42,7 +42,6 @@ public class UserEntity {
     @Column(name = "height")
     private double height;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<WorkoutListEntity> workoutsLists;
 }
