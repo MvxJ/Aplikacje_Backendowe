@@ -32,7 +32,12 @@ public class WorkoutListEntity {
     )
     private UserEntity user;
 
-    @ManyToMany(mappedBy = "workoutsLists")
+    @ManyToMany
+    @JoinTable(
+            name="workouts_in_lists",
+            joinColumns = @JoinColumn(name = "list_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "workout_id", referencedColumnName = "id")
+    )
     private List<WorkoutEntity> workouts;
 
     public void addWorkoutToList(WorkoutEntity workout)

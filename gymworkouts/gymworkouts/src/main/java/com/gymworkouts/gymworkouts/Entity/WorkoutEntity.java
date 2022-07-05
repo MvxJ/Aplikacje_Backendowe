@@ -49,12 +49,7 @@ public class WorkoutEntity {
     private CategoryEntity category;
 
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name="workouts_list_in_lists",
-            joinColumns = @JoinColumn(name = "list_id"),
-            inverseJoinColumns = @JoinColumn(name = "workout_id")
-    )
+    @ManyToMany(mappedBy = "workouts")
     private List<WorkoutListEntity> workoutsLists;
 
     public long getId() {
