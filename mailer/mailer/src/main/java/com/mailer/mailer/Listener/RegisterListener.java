@@ -1,6 +1,6 @@
-package com.gymworkouts.gymworkouts.Listeners;
+package com.mailer.mailer.Listener;
 
-import com.gymworkouts.gymworkouts.Service.MailerService;
+import com.mailer.mailer.Service.MailerService;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;

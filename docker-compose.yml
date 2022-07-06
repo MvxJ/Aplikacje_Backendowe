@@ -10,11 +10,21 @@ services:
     ports:
       - "80:80"
 
-  gym-users:
-    container_name: gym-users
+  mailer-service:
+    container_name: mailer-service
     build:
       context: .
-      dockerfile: ./Docker/GymWorkoutsUsers/Dockerfile
+      dockerfile: ./Docker/MailerService/Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - gym-workouts-network
+
+  gym-app:
+    container_name: gym-app
+    build:
+      context: .
+      dockerfile: ./Docker/GymApp/Dockerfile
     depends_on:
       - database
     ports:

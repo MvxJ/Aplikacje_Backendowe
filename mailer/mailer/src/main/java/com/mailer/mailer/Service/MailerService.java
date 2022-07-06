@@ -1,15 +1,13 @@
-package com.gymworkouts.gymworkouts.Service;
+package com.mailer.mailer.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import java.util.Properties;
 import javax.mail.*;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 @Service
 @Getter

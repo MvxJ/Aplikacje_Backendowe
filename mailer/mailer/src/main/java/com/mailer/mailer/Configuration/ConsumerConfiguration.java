@@ -1,4 +1,4 @@
-package com.gymworkouts.gymworkouts.Configuration;
+package com.mailer.mailer.Configuration;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
