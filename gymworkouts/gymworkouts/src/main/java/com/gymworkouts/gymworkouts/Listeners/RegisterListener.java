@@ -1,28 +1,32 @@
 package com.gymworkouts.gymworkouts.Listeners;
 
-import com.gymworkouts.gymworkouts.Service.RpcService;
+import com.gymworkouts.gymworkouts.Service.MailerService;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
+@EnableRabbit
 public class RegisterListener {
 
     @Autowired
-    private RpcService rpcService;
+    private MailerService mailerService;
 
-    @RabbitListener(queues = "register-queue")
+    @RabbitListener(queues = "${gumworkouts.rabbitmq.queue}")
     public void handleRegisterQueue(
-            @Header(value = AmqpHeaders.REPLY_TO, required = false) String senderId,
-            @Header(value = AmqpHeaders.CORRELATION_ID, required = false) String correlationId,
             String email
     ) {
         System.out.println("Register user with email: " + email);
-        if (senderId != null && correlationId != null) {
-            String responseMessage = "Successfully registered user with email: " + email;
-            this.rpcService.sendResponse(senderId, correlationId, responseMessage);
-        }
+
+        //TODO:: Please insert smtp data
+        mailerService.setFrom("*****");
+        mailerService.setHost("*****");
+        mailerService.setPassword("*****");
+        mailerService.setTo(email);
+        mailerService.send(
+                "User registration confirmation",
+                "Your account was successfully created!"
+        );
     }
 }

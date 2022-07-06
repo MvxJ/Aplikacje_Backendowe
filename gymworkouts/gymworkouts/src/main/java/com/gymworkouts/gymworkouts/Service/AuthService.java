@@ -25,13 +25,13 @@ public class AuthService {
     private PasswordService passwordService;
 
     @Autowired
-    private ProducerService producerService;
-
-    @Autowired
-    private MailerService mailerService;
+    private RabbitMqSender rabbitMqSender;
 
     public ResponseEntity<UserActionResponse> registerUser(HttpServletRequest request, RegisterUserRequest registerUserRequest) {
         HttpSession session = request.getSession();
+        String email = null;
+        Boolean success = false;
+
 
         if (this.isUserLogged(session)) {
             return ResponseEntity
@@ -55,28 +55,22 @@ public class AuthService {
             userEntity.setUsername(registerUserRequest.getUserName());
             userEntity.setEmail(registerUserRequest.getEmail());
 
-            //TODO:: Please insert smtp data
-            mailerService.setFrom("*********");
-            mailerService.setHost("*********");
-            mailerService.setPassword("*********");
-            mailerService.setTo(userEntity.getEmail());
-            mailerService.send(
-                    "User registration confirmation",
-                    "Your account was successfully created!"
-            );
-
-            this.producerService.sendMessage(userEntity.getEmail());
-
             userRepository.save(userEntity);
-
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new UserActionResponse(true, "Successfully registered user!"));
+            success = true;
+            email = userEntity.getEmail();
         } catch (Exception exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new UserActionResponse(false, exception.getMessage()));
         }
+
+        if (email != null && success == true) {
+            this.rabbitMqSender.send(email);
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new UserActionResponse(true, "Successfully registered user!"));
     }
 
     public ResponseEntity<AuthenticationResponse> loginUser(

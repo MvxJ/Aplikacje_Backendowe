@@ -11,6 +11,6 @@ public class ConsumerConfiguration {
 
     @Bean
     public Queue registerConsumerQueue() {
-        return new Queue("register-queue");
+        return new Queue("register-queue", true, false, false, null);
     }
 }
