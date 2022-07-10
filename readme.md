@@ -21,4 +21,7 @@
 - Please type this command in root project folder 'docker-compose up --build'
 - Please open Insomnia or Postman and test endpoints
 - To login into RabbitMq open in you browser localhost:15672 and use guest/guest credentials
+- To se all Endpoints and test functionality you can use implemented SwaggerUi on the address: http://localhost:8080/swagger-ui.html
 
+**Additional info**
+- If you will have problem with lunching project on MacOs in the project configuration you can change database to h2 and use commands for MacOs
